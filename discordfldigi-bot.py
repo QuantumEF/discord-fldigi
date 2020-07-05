@@ -19,7 +19,12 @@ async def on_ready():
         await asyncio.sleep(1)
         text = fldigi.rx.get_data()
         if text != b'':
-            await channel.send(text.decode("utf-8"))
+             try:
+                 await channel.send(text.decode("utf-8"))
+             except UnicodeDecodeError:
+                 print("Invalid Decode")
+                 continue
+        text2 = text.decode("utf-8").upper()
         if fldigi.main.get_trx_status() == 'rx':
             await client.change_presence(status=discord.Status.online)
         else:
