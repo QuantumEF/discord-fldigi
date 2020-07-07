@@ -20,6 +20,9 @@ callsign_bidict = bidict(callsign_dictionary)
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     channel = client.get_channel(discord_channel_id)
+    modem = fldigi.modem.get_name()
+    game = discord.Game(fldigi.modem.get_name())
+    await client.change_presence(status=discord.Status.idle, activity=game)
     while True:
         await asyncio.sleep(1)
         text = fldigi.rx.get_data()
@@ -37,6 +40,10 @@ async def on_ready():
             await client.change_presence(status=discord.Status.online)
         else:
             await client.change_presence(status=discord.Status.dnd)
+        if fldigi.modem.get_name() != modem:
+            game = discord.Game(fldigi.modem.get_name())
+            await client.change_presence(status=discord.Status.idle, activity=game)
+            modem = fldigi.modem.get_name()
 
 @client.event
 async def on_message(message):
