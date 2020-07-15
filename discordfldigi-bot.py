@@ -28,14 +28,13 @@ async def on_ready():
     while True:
         await asyncio.sleep(1)
         text = fldigi.rx.get_data()
-        text = text.decode("utf-8")
+        try:
+            text = text.decode("utf-8")
+        except UnicodeDecodeError:
+            print("Invalid Decode")
         if text != '':
             print(text)
-            try:
-                await channel.send(text)
-            except UnicodeDecodeError:
-                print("Invalid Decode")
-                continue
+            await channel.send(text)
         text2 = text.upper()
         for key in callsign_bidict.inverse:
             if "@"+key in text2:
